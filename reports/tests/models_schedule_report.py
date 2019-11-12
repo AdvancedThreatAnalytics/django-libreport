@@ -1,6 +1,6 @@
 import json
 from django_celery_beat.models import PeriodicTask
-from mock import patch
+from unittest.mock import patch
 from datetime import datetime
 from django.test import TestCase
 

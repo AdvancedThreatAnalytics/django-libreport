@@ -56,10 +56,12 @@ class BaseReportModel(models.Model):
     name = models.CharField(max_length=64, blank=True)
     report = models.CharField(max_length=64, choices=REPORT_CHOICES)
     typ = models.CharField(max_length=32, choices=TYPE_CHOICES)
-    organization = models.ForeignKey(ORG_MODEL)
+    organization = models.ForeignKey(ORG_MODEL, on_delete=models.CASCADE)
 
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True,
-                                   null=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, blank=True, null=True,
+        on_delete=models.SET_NULL
+    )
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     config = JSONField(blank=True, default={})
     emails = ArrayField(models.EmailField(max_length=255), blank=True,
@@ -151,7 +153,9 @@ class ReportSchedule(BaseReportModel):
         (PERIOD_YEARLY, PERIOD_YEARLY.title()),
     )
 
-    periodic_task = models.ForeignKey(PeriodicTask, null=True, blank=True)
+    periodic_task = models.ForeignKey(
+        PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
+    )
     schedule = JSONField(blank=True, default={})
     period = models.CharField(max_length=32, choices=PERIOD_CHOICES,
                               default=PERIOD_WEEKLY)
