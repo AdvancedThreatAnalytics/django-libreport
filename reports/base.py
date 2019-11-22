@@ -69,7 +69,9 @@ class BaseReport(object):
         browser = pychrome.Browser(url=url)
         encoded_html = base64.b64encode(html)
 
-        data_url = "data:text/html;base64,{}".format(encoded_html)
+        data_url = "data:text/html;base64,{}".format(
+            encoded_html.decode('utf-8')
+        )
         tab = browser.new_tab(data_url)
         tab.start()
 
