@@ -52,7 +52,7 @@ class BaseReport(object):
                 extra_args.append('--toc')
             convert_text(markdown, typ, 'markdown_phpextra',
                          outputfile=temp.name, extra_args=extra_args)
-            with open(temp.name, 'r') as document:
+            with open(temp.name, 'rb') as document:
                 return ContentFile(document.read())
 
     def html_to_pdf(self, html, delay=5):
