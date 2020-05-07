@@ -8,7 +8,7 @@ import json
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 from django.dispatch import Signal
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
@@ -106,7 +106,10 @@ class Report(BaseReportModel):
 
         if not self.generated:
             kwargs = {'report_id': self.pk}
-            generate_document.apply_async(kwargs=kwargs, countdown=10)
+            def apply_task():
+                generate_document.apply_async(kwargs=kwargs, countdown=1)
+
+            transaction.on_commit(apply_task)
 
     def generate_document(self):
         """
