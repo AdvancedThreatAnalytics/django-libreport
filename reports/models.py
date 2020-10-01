@@ -293,6 +293,7 @@ class ReportSchedule(BaseReportModel):
         Constructs crontab format schedule based on a period and stores
             it on schedule field
         """
+        # If a schedule is defined, pull from that
         if self.report_datetime:
             minute = str(self.report_datetime.minute)
             hour = str(self.report_datetime.hour)
@@ -335,7 +336,7 @@ class ReportSchedule(BaseReportModel):
             })
         elif self.period == self.PERIOD_QUARTERLY:
             # Runs every 1st day of a quarter at 6am
-            month_of_year = month_of_year % 3
+            month_of_year = int(month_of_year) % 3
             if not month_of_year:
                 month_of_year = '*'
 

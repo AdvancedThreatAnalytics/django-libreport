@@ -177,6 +177,19 @@ class ScheduleReportModelTestCase(TestCase):
             'month_of_year': '*'
         })
 
+        # Quarterly
+        quarterly = ReportSchedule(organization=org)
+        quarterly.period = ReportSchedule.PERIOD_QUARTERLY
+        quarterly.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
+        quarterly.set_schedule()
+        self.assertEquals(quarterly.schedule, {
+            'day_of_month': '10',
+            'day_of_week': '*',
+            'hour': '10',
+            'minute': '10',
+            'month_of_year': '1/3'
+        })
+
         # Yearly
         yearly = ReportSchedule(organization=org)
         yearly.period = ReportSchedule.PERIOD_YEARLY
@@ -188,6 +201,27 @@ class ScheduleReportModelTestCase(TestCase):
             'hour': '10',
             'minute': '10',
             'month_of_year': '10'
+        })
+
+    def test_quarterly_task_no_datetime_returns_valid_schedule(self):
+
+        org = Organization.objects.create(name='Org')
+
+        # Quarterly
+        quarterly = ReportSchedule(organization=org)
+        quarterly.period = ReportSchedule.PERIOD_QUARTERLY
+
+        # Test that when report_datetime is None, the schedule is valid
+        quarterly.report_datetime = None
+        quarterly.set_schedule()
+
+        # Should run at 6:00AM, first day of the month, every 3 months
+        self.assertEquals(quarterly.schedule, {
+            'day_of_month': '1',
+            'day_of_week': '*',
+            'hour': '6',
+            'minute': '0',
+            'month_of_year': '1/3'
         })
 
     def test_periodic_task_kwargs(self):
