@@ -1,16 +1,17 @@
+import json
 import logging
 from copy import deepcopy
 from datetime import datetime, time, timedelta
 from importlib import import_module
 from pkgutil import walk_packages
 
-import json
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.utils import timezone
+from django.db.models import Q
 from django.dispatch import Signal
+from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from jsonfield.fields import JSONField
 
@@ -71,6 +72,12 @@ class BaseReportModel(models.Model):
         abstract = True
 
 
+class ReportManager(models.Manager):
+    def failed(self):
+        qs = self.get_queryset()
+        return qs.filter(Q(document='') | Q(document=None))
+
+
 class Report(BaseReportModel):
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
@@ -80,6 +87,11 @@ class Report(BaseReportModel):
     class Meta(object):
         verbose_name = "Report"
         verbose_name_plural = "Reports"
+
+    objects = ReportManager()
+
+    def __str__(self):
+        return self.__unicode__()
 
     def __unicode__(self):
         return u'{0} ({1})'.format(self.name, self.get_report_display())
@@ -125,6 +137,8 @@ class Report(BaseReportModel):
 
     def _run_instance_method(self, method):
         kwargs = deepcopy(self.config)
+        if not isinstance(kwargs, dict):
+            kwargs = json.loads(kwargs)
         kwargs.update({
             'typ': self.typ,
             'start_datetime': self.start_datetime,
@@ -164,8 +178,10 @@ class ReportSchedule(BaseReportModel):
     def __unicode__(self):
         if self.name:
             return '{} ({})'.format(self.name, self.organization.name)
-        return '{}-{} ({})'.format(self.report, self.pk,
-                                   self.organization.name)
+        return '{}-{} ({})'.format(self.report, self.pk, self.organization.name)
+
+    def __str__(self):
+        return self.__unicode__()
 
     def delete(self, *args, **kwargs):
         # Clean up after ourselves when deleting a report

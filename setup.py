@@ -58,7 +58,7 @@ setup(
     license='BSD',
     description='Django app to allow creating custom reports easily.',
     author='Advanced Threat Analytics Inc.',
-    author_email='simon@advancedthreatanalytics.com',  # SEE NOTE BELOW (*)
+    author_email='simon@advancedthreatanalytics.com',
     packages=get_packages('reports'),
     package_data=get_package_data('reports'),
     test_suite='reports.runtests.runtests.main',
