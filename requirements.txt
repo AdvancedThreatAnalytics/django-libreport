@@ -1,0 +1,7 @@
+celery
+django
+django-celery-beat
+jsonfield
+pychrome
+pypandoc
+psycopg2
