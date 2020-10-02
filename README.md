@@ -53,3 +53,16 @@ That's it, we're done!
 
 [build-status-image]: https://secure.travis-ci.org/AdvancedThreatAnalytics/django-libreports.png?branch=master
 [travis]: http://travis-ci.org/AdvancedThreatAnalytics/django-libreports?branch=master
+
+# Development
+
+### Setting up
+Setup dependencies
+```
+pip install -r requirements.txt
+```
+### Running tests
+
+```
+python3 tests/runtests.py
+```
