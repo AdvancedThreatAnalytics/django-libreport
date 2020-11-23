@@ -17,6 +17,7 @@ from jsonfield.fields import JSONField
 from .base import BaseReport
 from .conf import ORG_MODEL, REPORT_PACKAGES, TYPE_CHOICES
 from .utils import hashed_upload_to
+from .exceptions import ReportSkipped
 
 logger = logging.getLogger(__name__)
 report_generated = Signal(providing_args=["report"])
@@ -112,16 +113,20 @@ class Report(BaseReportModel):
         """
         Generate and save the document
         """
+        try:
+            name = self._run_instance_method('get_report_filename')
+            content = self._run_instance_method('generate')
 
-        content = self._run_instance_method('generate')
-        name = self._run_instance_method('get_report_filename')
+            # Setting save to false to avoid hashed_upload_to raising an exception
+            # because of document not having an attached file.
+            self.document.save(name, content, save=False)
+            self.save()
 
-        # Setting save to false to avoid hashed_upload_to raising an exception
-        # because of document not having an attached file.
-        self.document.save(name, content, save=False)
-        self.save()
-
-        report_generated.send(sender=self.__class__, report=self)
+            report_generated.send(sender=self.__class__, report=self)
+        except ReportSkipped as ex:
+            logger.info("The report was skipped")
+            logger.info(ex)
+            self.delete()
 
     def _run_instance_method(self, method):
         kwargs = deepcopy(self.config)
