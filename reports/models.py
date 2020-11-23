@@ -11,6 +11,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 from django.dispatch import Signal
+from django.core.files.base import ContentFile
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from jsonfield.fields import JSONField
 
@@ -124,9 +125,11 @@ class Report(BaseReportModel):
 
             report_generated.send(sender=self.__class__, report=self)
         except ReportSkipped as ex:
-            logger.info("The report was skipped")
-            logger.info(ex)
-            self.delete()
+            logger.info(f"The report was skipped, reason: {ex.reason}")
+            self.document.save(name, ContentFile(f"Report generation was "
+                                                 f"skipped: {ex.reason}"),
+                               save=False)
+            self.save()
 
     def _run_instance_method(self, method):
         kwargs = deepcopy(self.config)
