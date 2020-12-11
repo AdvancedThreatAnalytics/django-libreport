@@ -66,6 +66,7 @@ class BaseReportModel(models.Model):
     config = JSONField(blank=True, default={})
     emails = ArrayField(models.EmailField(max_length=255), blank=True,
                         null=True)
+    deleted = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
