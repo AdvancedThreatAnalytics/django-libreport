@@ -138,6 +138,10 @@ class Report(BaseReportModel):
         instance = REPORTS[self.report]()
         return getattr(instance, method)(**kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.deleted = True
+        self.save()
+
 
 class ReportSchedule(BaseReportModel):
     PERIOD_DAILY = 'daily'
@@ -171,7 +175,8 @@ class ReportSchedule(BaseReportModel):
     def delete(self, *args, **kwargs):
         # Clean up after ourselves when deleting a report
         self.periodic_task.delete()
-        super(ReportSchedule, self).delete(*args, **kwargs)
+        self.deleted = True
+        self.save()
 
     @classmethod
     def available_periods(cls):
