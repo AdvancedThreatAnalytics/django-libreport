@@ -11,12 +11,14 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 from django.dispatch import Signal
+from django.core.files.base import ContentFile
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from jsonfield.fields import JSONField
 
 from .base import BaseReport
 from .conf import ORG_MODEL, REPORT_PACKAGES, TYPE_CHOICES
 from .utils import hashed_upload_to
+from .exceptions import ReportSkipped
 
 logger = logging.getLogger(__name__)
 report_generated = Signal(providing_args=["report"])
@@ -112,16 +114,22 @@ class Report(BaseReportModel):
         """
         Generate and save the document
         """
+        try:
+            name = self._run_instance_method('get_report_filename')
+            content = self._run_instance_method('generate')
 
-        content = self._run_instance_method('generate')
-        name = self._run_instance_method('get_report_filename')
+            # Setting save to false to avoid hashed_upload_to raising an exception
+            # because of document not having an attached file.
+            self.document.save(name, content, save=False)
+            self.save()
 
-        # Setting save to false to avoid hashed_upload_to raising an exception
-        # because of document not having an attached file.
-        self.document.save(name, content, save=False)
-        self.save()
-
-        report_generated.send(sender=self.__class__, report=self)
+            report_generated.send(sender=self.__class__, report=self)
+        except ReportSkipped as ex:
+            logger.info(f"The report was skipped, reason: {ex.reason}")
+            self.document.save(name, ContentFile(f"Report generation was "
+                                                 f"skipped: {ex.reason}"),
+                               save=False)
+            self.save()
 
     def _run_instance_method(self, method):
         kwargs = deepcopy(self.config)
