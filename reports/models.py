@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.dispatch import Signal
 from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
+from django.contrib.postgres.fields import JSONField
 from jsonfield.fields import JSONField
 
 from .base import BaseReport
@@ -64,7 +65,7 @@ class BaseReportModel(models.Model):
         on_delete=models.SET_NULL
     )
     created_at = models.DateTimeField(default=timezone.now, editable=False)
-    config = JSONField(blank=True, default={})
+    config = JSONField(blank=True, default=dict)
     emails = ArrayField(models.EmailField(max_length=255), blank=True,
                         null=True)
 
@@ -170,7 +171,7 @@ class ReportSchedule(BaseReportModel):
     periodic_task = models.ForeignKey(
         PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
     )
-    schedule = JSONField(blank=True, default={})
+    schedule = JSONField(blank=True, default=dict)
     period = models.CharField(max_length=32, choices=PERIOD_CHOICES,
                               default=PERIOD_WEEKLY)
     report_datetime = models.DateTimeField(null=True, blank=True)
