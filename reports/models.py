@@ -14,7 +14,6 @@ from django.dispatch import Signal
 from django.utils import timezone
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from django.contrib.postgres.fields import JSONField
-from jsonfield.fields import JSONField
 
 from .base import BaseReport
 from .conf import ORG_MODEL, REPORT_PACKAGES, TYPE_CHOICES
