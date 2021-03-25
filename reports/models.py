@@ -61,13 +61,16 @@ class BaseReportModel(models.Model):
     organization = models.ForeignKey(ORG_MODEL, on_delete=models.CASCADE)
 
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=True, null=True,
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
         on_delete=models.SET_NULL
     )
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     config = JSONField(blank=True, default={})
-    emails = ArrayField(models.EmailField(max_length=255), blank=True,
-                        null=True)
+    emails = ArrayField(
+        models.EmailField(max_length=255), blank=True, null=True
+    )
     deleted = models.BooleanField(default=False)
 
     class Meta:
@@ -75,10 +78,27 @@ class BaseReportModel(models.Model):
 
 
 class Report(BaseReportModel):
+    STATUS_RUNNING = 'running'
+    STATUS_COMPLETED = 'completed'
+    STATUS_FAILED = 'failed'
+    STATUS_SKIPPED = 'skipped'
+
+    STATUS_CHOICES = (
+        (STATUS_RUNNING, 'Running'),
+        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_FAILED, 'Failed'),
+        (STATUS_SKIPPED, 'Skipped'),
+    )
+
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
-    document = models.FileField(upload_to=report_upload_to, blank=True,
-                                null=True, max_length=1024)
+    document = models.FileField(
+        upload_to=report_upload_to, blank=True, null=True, max_length=1024
+    )
+    status = models.CharField(
+        max_length=256, choices=STATUS_CHOICES, default=STATUS_RUNNING
+    )
+    origin_report_id = models.PositiveIntegerField(null=True)
 
     class Meta(object):
         verbose_name = "Report"
@@ -119,6 +139,8 @@ class Report(BaseReportModel):
             name = self._run_instance_method('get_report_filename')
             content = self._run_instance_method('generate')
 
+            self.status = self.STATUS_COMPLETED
+
             # Setting save to false to avoid hashed_upload_to raising an exception
             # because of document not having an attached file.
             self.document.save(name, content, save=False)
@@ -127,22 +149,40 @@ class Report(BaseReportModel):
             report_generated.send(sender=self.__class__, report=self)
         except ReportSkipped as ex:
             logger.info(f"The report was skipped, reason: {ex.reason}")
-            self.document.save(name, ContentFile(f"Report generation was "
-                                                 f"skipped: {ex.reason}"),
-                               save=False)
+
+            self.status = self.STATUS_SKIPPED
+
+            self.document.save(
+                name,
+                ContentFile(f"Report generation was "
+                            f"skipped: {ex.reason}"),
+                save=False
+            )
             self.save()
+
+        except Exception as ex:
+            # Any other exception should try to mark the report as failed
+            # but pass through the exception so it is not mangled
+            self.status = self.STATUS_FAILED
+
+            # Only update the status in case things went horribly wrong
+            self.save(update_fields=['status'])
+
+            raise ex
 
     def _run_instance_method(self, method):
         kwargs = deepcopy(self.config)
-        kwargs.update({
-            'typ': self.typ,
-            'start_datetime': self.start_datetime,
-            'end_datetime': self.end_datetime,
-            'created_by': self.created_by,
-            'created_at': self.created_at,
-            'organization': self.organization,
-            'config': self.config,
-        })
+        kwargs.update(
+            {
+                'typ': self.typ,
+                'start_datetime': self.start_datetime,
+                'end_datetime': self.end_datetime,
+                'created_by': self.created_by,
+                'created_at': self.created_at,
+                'organization': self.organization,
+                'config': self.config,
+            }
+        )
         instance = REPORTS[self.report]()
         return getattr(instance, method)(**kwargs)
 
@@ -166,15 +206,15 @@ class ReportSchedule(BaseReportModel):
         PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
     )
     schedule = JSONField(blank=True, default={})
-    period = models.CharField(max_length=32, choices=PERIOD_CHOICES,
-                              default=PERIOD_WEEKLY)
+    period = models.CharField(
+        max_length=32, choices=PERIOD_CHOICES, default=PERIOD_WEEKLY
+    )
     report_datetime = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         if self.name:
             return '{} ({})'.format(self.name, self.organization.name)
-        return '{}-{} ({})'.format(self.report, self.pk,
-                                   self.organization.name)
+        return '{}-{} ({})'.format(self.report, self.pk, self.organization.name)
 
     def delete(self, *args, **kwargs):
         # Clean up after ourselves when deleting a report
@@ -252,15 +292,16 @@ class ReportSchedule(BaseReportModel):
         if self.period == self.PERIOD_DAILY:
             # Yesterday
             start_datetime = today - timedelta(days=1)
-            end_datetime = datetime.combine(start_datetime.date(),
-                                            time(23, 59, 59))
+            end_datetime = datetime.combine(
+                start_datetime.date(), time(23, 59, 59)
+            )
 
         elif self.period == self.PERIOD_WEEKLY:
             # Last week starting from monday
             start_datetime = today - timedelta(days=7 + today.weekday())
             end_datetime = datetime.combine(
-                (start_datetime + timedelta(days=6)).date(),
-                time(23, 59, 59))
+                (start_datetime + timedelta(days=6)).date(), time(23, 59, 59)
+            )
         elif self.period == self.PERIOD_MONTHLY:
             # Last Months start and end date
             current_month_start = today.replace(day=1)
@@ -318,49 +359,56 @@ class ReportSchedule(BaseReportModel):
             day_of_month = '1'
             month_of_year = '1'
 
-        self.schedule = {
-            'minute': minute,
-            'hour': hour
-        }
+        self.schedule = {'minute': minute, 'hour': hour}
         if self.period == self.PERIOD_DAILY:
             # Runs every day at 6am
-            self.schedule.update({
-                'day_of_week': '*',
-                'day_of_month': '*',
-                'month_of_year': '*'
-            })
+            self.schedule.update(
+                {
+                    'day_of_week': '*',
+                    'day_of_month': '*',
+                    'month_of_year': '*'
+                }
+            )
         elif self.period == self.PERIOD_WEEKLY:
             # Runs every Monday at 6am
-            self.schedule.update({
-                'day_of_week': day_of_week,
-                'day_of_month': '*',
-                'month_of_year': '*'
-            })
+            self.schedule.update(
+                {
+                    'day_of_week': day_of_week,
+                    'day_of_month': '*',
+                    'month_of_year': '*'
+                }
+            )
         elif self.period == self.PERIOD_MONTHLY:
             # Runs every 1st day of a Month at 6am
-            self.schedule.update({
-                'day_of_week': '*',
-                'day_of_month': day_of_month,
-                'month_of_year': '*'
-            })
+            self.schedule.update(
+                {
+                    'day_of_week': '*',
+                    'day_of_month': day_of_month,
+                    'month_of_year': '*'
+                }
+            )
         elif self.period == self.PERIOD_QUARTERLY:
             # Runs every 1st day of a quarter at 6am
             month_of_year = int(month_of_year) % 3
             if not month_of_year:
                 month_of_year = '*'
 
-            self.schedule.update({
-                'day_of_week': '*',
-                'day_of_month': day_of_month,
-                'month_of_year': '{}/3'.format(month_of_year)
-            })
+            self.schedule.update(
+                {
+                    'day_of_week': '*',
+                    'day_of_month': day_of_month,
+                    'month_of_year': '{}/3'.format(month_of_year)
+                }
+            )
         elif self.period == self.PERIOD_YEARLY:
             # Runs every 1st day of a year at 6am
-            self.schedule.update({
-                'day_of_week': '*',
-                'day_of_month': day_of_month,
-                'month_of_year': month_of_year
-            })
+            self.schedule.update(
+                {
+                    'day_of_week': '*',
+                    'day_of_month': day_of_month,
+                    'month_of_year': month_of_year
+                }
+            )
 
         self.save()
 
@@ -380,6 +428,7 @@ class ReportSchedule(BaseReportModel):
             'end_datetime': end_datetime,
             'config': self.config,
             'emails': self.emails,
+            'origin_report_id': self.pk,
         }
         if self.name:
             data['name'] = self.name
