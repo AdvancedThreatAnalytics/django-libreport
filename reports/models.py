@@ -98,7 +98,13 @@ class Report(BaseReportModel):
     status = models.CharField(
         max_length=256, choices=STATUS_CHOICES, default=STATUS_RUNNING
     )
-    origin_report_id = models.PositiveIntegerField(null=True)
+    schedule = models.ForeignKey(
+        'reports.ReportSchedule',
+        related_name='reports',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
 
     class Meta(object):
         verbose_name = "Report"
@@ -114,6 +120,12 @@ class Report(BaseReportModel):
         """
 
         return bool(self.document)
+
+    def get_status_display(self):
+        for value, display in self.STATUS_CHOICES:
+            if self.status == value:
+                return display
+        return None
 
     def save(self, *args, **kwargs):
         if not self.name:
@@ -428,7 +440,7 @@ class ReportSchedule(BaseReportModel):
             'end_datetime': end_datetime,
             'config': self.config,
             'emails': self.emails,
-            'origin_report_id': self.pk,
+            'schedule': self,
         }
         if self.name:
             data['name'] = self.name
