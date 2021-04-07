@@ -166,8 +166,8 @@ class Report(BaseReportModel):
 
             self.document.save(
                 name,
-                ContentFile(f"Report generation was "
-                            f"skipped: {ex.reason}"),
+                ContentFile((f"Report generation was "
+                            f"skipped: {ex.reason}").encode('utf-8')),
                 save=False
             )
             self.save()
