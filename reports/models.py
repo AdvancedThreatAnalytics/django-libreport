@@ -230,8 +230,11 @@ class ReportSchedule(BaseReportModel):
 
     def delete(self, *args, **kwargs):
         # Clean up after ourselves when deleting a report
-        self.periodic_task.delete()
-        super(ReportSchedule, self).delete(*args, **kwargs)
+        if self.periodic_task:
+            PeriodicTask.objects.filter(pk=self.periodic_task.pk).delete()
+        self.periodic_task = None
+        self.deleted = True
+        self.save(update_fields=('periodic_task', 'deleted', ))
 
     @classmethod
     def available_periods(cls):
