@@ -134,6 +134,18 @@ class ScheduleReportModelTestCase(TestCase):
             'month_of_year': '1'
         })
 
+        # Quarterly
+        quarterly = ReportSchedule(organization=org)
+        quarterly.period = ReportSchedule.PERIOD_QUARTERLY
+        quarterly.set_schedule()
+        self.assertEquals(quarterly.schedule, {
+            'minute': '0',
+            'hour': '6',
+            'day_of_week': '*',
+            'day_of_month': '1',
+            'month_of_year': '*/3'
+        })
+
     def test_set_schedule_choosen_date(self):
 
         org = Organization.objects.create(name='Org')
@@ -187,7 +199,7 @@ class ScheduleReportModelTestCase(TestCase):
             'day_of_week': '*',
             'hour': '10',
             'minute': '10',
-            'month_of_year': '1/3'
+            'month_of_year': '*/3'
         })
 
         # Yearly
@@ -221,7 +233,7 @@ class ScheduleReportModelTestCase(TestCase):
             'day_of_week': '*',
             'hour': '6',
             'minute': '0',
-            'month_of_year': '1/3'
+            'month_of_year': '*/3'
         })
 
     def test_periodic_task_kwargs(self):
