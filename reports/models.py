@@ -404,10 +404,6 @@ class ReportSchedule(BaseReportModel):
             )
         elif self.period == self.PERIOD_QUARTERLY:
             # Runs every 1st day of a quarter at 6am
-            month_of_year = int(month_of_year) % 3
-            if not month_of_year:
-                month_of_year = '*'
-
             self.schedule.update(
                 {
                     'day_of_week': '*',
