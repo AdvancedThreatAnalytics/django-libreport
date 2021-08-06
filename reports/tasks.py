@@ -2,13 +2,14 @@ import logging
 import sys
 
 from celery import shared_task
+from .conf import TASKS_QUEUE
 from .models import Report, ReportSchedule
 
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(ignore_result=True, bind=True, default_retry_delay=1 * 60)
+@shared_task(ignore_result=True, bind=True, default_retry_delay=1 * 60, queue=TASKS_QUEUE)
 def generate_document(self, report_id):
     """
     Generates the report document. Retry after 1 minute
@@ -26,7 +27,7 @@ def generate_document(self, report_id):
         raise self.retry(exc=exc)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, queue=TASKS_QUEUE)
 def schedule_task(report_schedule_id):
     report_schedule = ReportSchedule.objects.get(pk=report_schedule_id)
     report_schedule.schedule_report()
