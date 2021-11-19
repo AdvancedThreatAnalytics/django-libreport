@@ -10,4 +10,17 @@ class ReportAdmin(admin.ModelAdmin):
 
 @admin.register(ReportSchedule)
 class ReportScheduleAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "id",
+        "report",
+        "name",
+        "typ",
+        "created_by",
+    )
+    list_filter = ("organization", "period")
+    search_fields = (
+        "name",
+        "created_by__name",
+        "created_by__email",
+        "organization__psa_id",
+    )
