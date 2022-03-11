@@ -1,4 +1,4 @@
-celery
+celery>=5.2.3
 django>=3.2
 django-celery-beat
 pychrome
