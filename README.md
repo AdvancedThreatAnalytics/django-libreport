@@ -11,11 +11,10 @@ Django app to allow creating custom reports easily..
 # Requirements
 
 * Python (3.8)
-* Django (2.2+)
+* Django (3.2+)
 * python-dateutil
 * pychrome
 * django-celery-beat
-* jsonfield
 * pypandoc
 * Chrome or Chromium web browser
 

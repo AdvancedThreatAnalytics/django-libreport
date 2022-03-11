@@ -1,7 +1,6 @@
 celery
-django
+django>=3.2
 django-celery-beat
-jsonfield
 pychrome
 pypandoc
 psycopg2
