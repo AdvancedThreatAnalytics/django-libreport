@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations
-import jsonfield.fields
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -15,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='reportschedule',
             name='config',
-            field=jsonfield.fields.JSONField(default={}, blank=True),
+            field=models.JSONField(default={}, blank=True),
         ),
     ]

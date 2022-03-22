@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import reports.models
-import jsonfield.fields
 import django.contrib.postgres.fields
 from django.conf import settings
 
@@ -28,7 +27,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=64, blank=True)),
                 ('start_datetime', models.DateTimeField()),
                 ('end_datetime', models.DateTimeField()),
-                ('config', jsonfield.fields.JSONField(default={}, blank=True)),
+                ('config', models.JSONField(default={}, blank=True)),
                 ('document', models.FileField(null=True, upload_to=reports.models.report_upload_to, blank=True)),
                 ('created_by', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=django.db.models.deletion.SET_NULL)),
                 ('organization', models.ForeignKey(to=settings.ORGANIZATION_MODEL, on_delete=django.db.models.deletion.CASCADE)),
@@ -46,7 +45,7 @@ class Migration(migrations.Migration):
                 ('typ', models.CharField(max_length=32, choices=[(b'docx', b'Word Doc')])),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
                 ('emails', django.contrib.postgres.fields.ArrayField(null=True, base_field=models.EmailField(max_length=255), size=None)),
-                ('schedule', jsonfield.fields.JSONField(default={}, blank=True)),
+                ('schedule', models.JSONField(default={}, blank=True)),
                 ('period', models.CharField(default=b'weekly', max_length=32, choices=[(b'daily', b'Daily'), (b'weekly', b'Weekly'), (b'monthly', b'Monthly'), (b'quarterly', b'Quarterly'), (b'yearly', b'Yearly')])),
                 ('created_by', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=django.db.models.deletion.SET_NULL)),
                 ('organization', models.ForeignKey(to=settings.ORGANIZATION_MODEL, on_delete=django.db.models.deletion.CASCADE)),
