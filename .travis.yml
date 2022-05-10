@@ -1,14 +1,14 @@
 language: python
 
 addons:
-  postgresql: "9.4"
+  postgresql: "13.1"
 
 python:
-  - "2.7"
-  - "3.4"
+  - "3.8"
 
 env:
-  - DJANGO="django==1.8.2"
+  - DJANGO="django>=3.0,<4.0"
+  - DJANGO="django>=2.0,<3.0"
 
 install:
   - pip install $DJANGO

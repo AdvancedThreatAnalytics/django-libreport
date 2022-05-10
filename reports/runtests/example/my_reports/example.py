@@ -7,8 +7,8 @@ class ExampleReport(BaseReport):
     Example report
     """
 
-    id = u'example'
-    name = u'Example report'
+    id = u"example"
+    name = u"Example report"
 
     def generate(self, **kwargs):
-        return ContentFile(u'Some data')
+        return ContentFile(u"Some data")

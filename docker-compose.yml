@@ -2,19 +2,16 @@ version: "2"
 services:
 
   postgres:
-    image: simonluijk/docker-postgres-dev:9.4
+    image: postgres:13.1-alpine
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
-      - ./tmp/postgres:/var/lib/postgresql/9.4
-    logging:
-      driver: json-file
-      options:
-        max-size: 10k
-        max-file: "2"
+      - ./tmp/postgres:/var/lib/postgresql/13.1
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
     networks:
       - reports
-
 
 networks:
   reports:
