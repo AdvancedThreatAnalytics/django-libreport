@@ -22,9 +22,8 @@ Django app to allow creating custom reports easily..
 
 Install using `pip`...
 
+    aws --profile production codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
     pip install django-libreport
-    OR 
-    pip install git+https://github.com/AdvancedThreatAnalytics/django-libreport.git
 
 Example settings:
 
@@ -63,4 +62,19 @@ pip install -r requirements.txt
 
 ```
 python3 tests/runtests.py
+```
+
+### Adding requirements to requirements-build.in
+Make sure when you run `pip-compile`, you add the `--no-emit-index-url` flag, to
+prevent the CodeArtifact token from being committed to source control:
+```
+pip-compile --no-emit-index-url requirements-build.in
+pip install -r requirements-build.txt
+```
+
+### Deploying
+```
+python -m build
+aws --profile production codeartifact login --tool twine --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
+twine upload --repository codeartifact dist/*
 ```
