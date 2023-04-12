@@ -328,7 +328,7 @@ class ReportSchedule(BaseReportModel):
         elif self.period == self.PERIOD_QUARTERLY:
             # Last quarter's start and end date
             year = today.year
-            last_quarter = (today.month - 1) / 3
+            last_quarter = int((today.month - 1) / 3)
             if last_quarter == 0:
                 # in this case it should be last year's Q4
                 last_quarter = 4

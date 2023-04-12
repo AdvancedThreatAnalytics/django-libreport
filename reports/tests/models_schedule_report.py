@@ -37,6 +37,13 @@ class ScheduleReportModelTestCase(TestCase):
         self.assertEquals(start, datetime(2012, 11, 1, 0, 0, 0))
         self.assertEquals(end, datetime(2012, 11, 30, 23, 59, 59))
 
+        # Quaterly
+        quaterly = ReportSchedule(organization=org)
+        quaterly.period = ReportSchedule.PERIOD_QUARTERLY
+        start, end = quaterly.datetimes_by_period()
+        self.assertEquals(start, datetime(2012, 7, 1, 0, 0, 0))
+        self.assertEquals(end, datetime(2012, 9, 30, 23, 59, 59))
+
         # Yearly
         yearly = ReportSchedule(organization=org)
         yearly.period = ReportSchedule.PERIOD_YEARLY
