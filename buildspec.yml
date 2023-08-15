@@ -1,0 +1,40 @@
+version: 0.2
+
+env:
+  shell: bash
+phases:
+  install:
+    runtime-versions:
+      python: 3.10
+  pre_build:
+    commands:
+      - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
+      - # Add pip cache to speed up build time
+        # We need to put it in a directory accessible by the docker build context
+        # We'll attempt to make the directory in case the cache is currently empty
+        - mkdir -p /root/.cache/pip
+        - cp -R /root/.cache .cache
+        - pip install black
+        - pip install -r requirements-build.txt
+        - REPOSITORY_BASE=818476207984.dkr.ecr.us-west-2.amazonaws.com
+        - AWS_DEFAULT_REGION=us-west-2
+        - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_BASE
+        - docker build -t app .
+    build:
+      commands:
+        - black --check .
+        - docker run -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION -v /root/.config/pip/pip.conf:/root/.config/pip/pip.conf app tox
+        - python -m build
+    post_build:
+      commands:
+        - |
+          if [ "$CODEBUILD_WEBHOOK_TRIGGER" == "branch/master" ] && [ "$CODEBUILD_BUILD_SUCCEEDING" -eq "1" ]; then
+            aws codeartifact login --tool twine --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
+            twine upload --repository codeartifact dist/*
+          else
+            echo Cannot upload to CodeArtifact
+          fi
+
+    cache:
+      paths:
+        - "/root/.cache/pip/**/*/"
