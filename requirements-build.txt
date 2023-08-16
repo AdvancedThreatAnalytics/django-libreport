@@ -54,7 +54,7 @@ pyproject-hooks==1.0.0
     # via build
 readme-renderer==37.3
     # via twine
-requests==2.28.2
+requests==2.31.0
     # via
     #   requests-toolbelt
     #   twine
@@ -62,7 +62,7 @@ requests-toolbelt==0.10.1
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==13.3.2
+rich==13.4.2
     # via twine
 secretstorage==3.3.3
     # via keyring
