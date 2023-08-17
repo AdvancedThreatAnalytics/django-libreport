@@ -20,7 +20,7 @@ charset-normalizer==3.1.0
     # via requests
 colorama==0.4.6
     # via tox
-cryptography==39.0.2
+cryptography==41.0.3
     # via secretstorage
 distlib==0.3.7
     # via virtualenv
@@ -36,8 +36,6 @@ importlib-metadata==6.1.0
     # via
     #   keyring
     #   twine
-importlib-resources==5.12.0
-    # via keyring
 jaraco-classes==3.2.3
     # via keyring
 jeepney==0.8.0
@@ -91,18 +89,10 @@ secretstorage==3.3.3
     # via keyring
 six==1.16.0
     # via bleach
-tomli==2.0.1
-    # via
-    #   build
-    #   pyproject-api
-    #   pyproject-hooks
-    #   tox
 tox==4.9.0
     # via -r requirements-build.in
 twine==4.0.2
     # via -r requirements-build.in
-typing-extensions==4.5.0
-    # via rich
 urllib3==1.26.15
     # via
     #   requests
@@ -112,6 +102,4 @@ virtualenv==20.24.3
 webencodings==0.5.1
     # via bleach
 zipp==3.15.0
-    # via
-    #   importlib-metadata
-    #   importlib-resources
+    # via importlib-metadata
