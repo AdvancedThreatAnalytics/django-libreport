@@ -11,21 +11,21 @@ phases:
         - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
         - pip install black
         - pip install -r requirements-build.txt
-    build:
-      commands:
-        - black --check .
-        - python tests/runtests.py
-        - python -m build
-    post_build:
-      commands:
-        - |
-          if [ "$CODEBUILD_WEBHOOK_TRIGGER" == "branch/master" ] && [ "$CODEBUILD_BUILD_SUCCEEDING" -eq "1" ]; then
-            aws codeartifact login --tool twine --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
-            twine upload --repository codeartifact dist/*
-          else
-            echo Cannot upload to CodeArtifact
-          fi
+  build:
+    commands:
+      - black --check .
+      - python tests/runtests.py
+      - python -m build
+  post_build:
+    commands:
+      - |
+        if [ "$CODEBUILD_WEBHOOK_TRIGGER" == "branch/master" ] && [ "$CODEBUILD_BUILD_SUCCEEDING" -eq "1" ]; then
+          aws codeartifact login --tool twine --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
+          twine upload --repository codeartifact dist/*
+        else
+          echo Cannot upload to CodeArtifact
+        fi
 
-    cache:
-      paths:
-        - "/root/.cache/pip/**/*/"
+  cache:
+    paths:
+      - "/root/.cache/pip/**/*/"
