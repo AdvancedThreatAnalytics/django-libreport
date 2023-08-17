@@ -11,14 +11,10 @@ phases:
         - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
         - pip install black
         - pip install -r requirements-build.txt
-        - REPOSITORY_BASE=818476207984.dkr.ecr.us-west-2.amazonaws.com
-        - AWS_DEFAULT_REGION=us-west-2
-        - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_BASE
-        - docker build -t app .
   build:
     commands:
       - black --check .
-      - docker run -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION -v /root/.config/pip/pip.conf:/root/.config/pip/pip.conf app tox
+      - tox
       - python -m build
   post_build:
     commands:
