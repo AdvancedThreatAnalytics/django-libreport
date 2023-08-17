@@ -8,24 +8,30 @@ phases:
       python: 3.10
   pre_build:
     commands:
-        - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
-        - pip install black
-        - pip install -r requirements-build.txt
-    build:
-      commands:
-        - black --check .
-        - python tests/runtests.py
-        - python -m build
-    post_build:
-      commands:
-        - |
-          if [ "$CODEBUILD_WEBHOOK_TRIGGER" == "branch/master" ] && [ "$CODEBUILD_BUILD_SUCCEEDING" -eq "1" ]; then
-            aws codeartifact login --tool twine --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
-            twine upload --repository codeartifact dist/*
-          else
-            echo Cannot upload to CodeArtifact
-          fi
+      - export COMPOSE_FILE=docker-compose.codebuild.yml
+      - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
+      - pip install black
+      - pip install -r requirements-build.txt
+      - REPOSITORY_BASE=818476207984.dkr.ecr.us-west-2.amazonaws.com
+      - AWS_DEFAULT_REGION=us-west-2
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_BASE
+      - docker-compose up -d postgres
+      - docker-compose build app
+  build:
+    commands:
+      - black --check .
+      - docker-compose run app tox
+      - python -m build
+  post_build:
+    commands:
+      - |
+        if [ "$CODEBUILD_WEBHOOK_TRIGGER" == "branch/master" ] && [ "$CODEBUILD_BUILD_SUCCEEDING" -eq "1" ]; then
+          aws codeartifact login --tool twine --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
+          twine upload --repository codeartifact dist/*
+        else
+          echo Cannot upload to CodeArtifact
+        fi
 
-    cache:
-      paths:
-        - "/root/.cache/pip/**/*/"
+cache:
+  paths:
+    - "/root/.cache/pip/**/*/"

@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reports', '0006_auto_20210325_2053'),
+        ("reports", "0006_auto_20210325_2053"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='report',
-            name='config',
+            model_name="report",
+            name="config",
             field=models.JSONField(blank=True, default=dict),
         ),
         migrations.AlterField(
-            model_name='reportschedule',
-            name='config',
+            model_name="reportschedule",
+            name="config",
             field=models.JSONField(blank=True, default=dict),
         ),
         migrations.AlterField(
-            model_name='reportschedule',
-            name='schedule',
+            model_name="reportschedule",
+            name="schedule",
             field=models.JSONField(blank=True, default=dict),
         ),
     ]

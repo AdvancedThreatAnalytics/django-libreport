@@ -8,16 +8,28 @@ bleach==6.0.0
     # via readme-renderer
 build==0.10.0
     # via -r requirements-build.in
+cachetools==5.3.1
+    # via tox
 certifi==2022.12.7
     # via requests
 cffi==1.15.1
     # via cryptography
+chardet==5.2.0
+    # via tox
 charset-normalizer==3.1.0
     # via requests
+colorama==0.4.6
+    # via tox
 cryptography==39.0.2
     # via secretstorage
+distlib==0.3.7
+    # via virtualenv
 docutils==0.19
     # via readme-renderer
+filelock==3.12.2
+    # via
+    #   tox
+    #   virtualenv
 idna==3.4
     # via requests
 importlib-metadata==6.1.0
@@ -40,16 +52,27 @@ mdurl==0.1.2
     # via markdown-it-py
 more-itertools==9.1.0
     # via jaraco-classes
-packaging==23.0
-    # via build
+packaging==23.1
+    # via
+    #   build
+    #   pyproject-api
+    #   tox
 pkginfo==1.9.6
     # via twine
+platformdirs==3.10.0
+    # via
+    #   tox
+    #   virtualenv
+pluggy==1.2.0
+    # via tox
 pycparser==2.21
     # via cffi
 pygments==2.14.0
     # via
     #   readme-renderer
     #   rich
+pyproject-api==1.5.3
+    # via tox
 pyproject-hooks==1.0.0
     # via build
 readme-renderer==37.3
@@ -71,7 +94,11 @@ six==1.16.0
 tomli==2.0.1
     # via
     #   build
+    #   pyproject-api
     #   pyproject-hooks
+    #   tox
+tox==4.9.0
+    # via -r requirements-build.in
 twine==4.0.2
     # via -r requirements-build.in
 typing-extensions==4.5.0
@@ -80,6 +107,8 @@ urllib3==1.26.15
     # via
     #   requests
     #   twine
+virtualenv==20.24.3
+    # via tox
 webencodings==0.5.1
     # via bleach
 zipp==3.15.0

@@ -5,7 +5,7 @@ import sys
 
 # fix sys path so we don't need to setup PYTHONPATH
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'reports.runtests.settings'
+os.environ["DJANGO_SETTINGS_MODULE"] = "reports.runtests.settings"
 
 
 import django
@@ -20,9 +20,9 @@ def main():
         pass
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
-    failures = test_runner.run_tests(['reports.tests'])
+    failures = test_runner.run_tests(["reports.tests"])
     sys.exit(failures)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

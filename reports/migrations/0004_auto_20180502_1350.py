@@ -6,20 +6,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reports', '0003_auto_20171119_1232'),
+        ("reports", "0003_auto_20171119_1232"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reportschedule',
-            name='name',
+            model_name="reportschedule",
+            name="name",
             field=models.CharField(blank=True, max_length=64),
         ),
         migrations.AddField(
-            model_name='reportschedule',
-            name='report_datetime',
+            model_name="reportschedule",
+            name="report_datetime",
             field=models.DateTimeField(blank=True, null=True),
-        )
+        ),
     ]

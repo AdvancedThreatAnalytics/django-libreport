@@ -1,0 +1,26 @@
+version: "2"
+services:
+
+  app:
+    image: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+        - AWS_DEFAULT_REGION=us-west-2
+    networks:
+        - codebuild
+  postgres:
+    image: 818476207984.dkr.ecr.us-west-2.amazonaws.com/advancedthreatanalytics/docker-postgres-dev:15
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_USER: docker
+        POSTGRES_PASSWORD: docker
+    hostname: docker
+    networks:
+      - codebuild
+
+networks:
+  codebuild:
+    driver: bridge

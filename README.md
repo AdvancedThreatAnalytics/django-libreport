@@ -61,7 +61,7 @@ pip install -r requirements.txt
 ### Running tests
 
 ```
-python3 tests/runtests.py
+python3 reports/runtests/runtests.py
 ```
 
 ### Adding requirements to requirements-build.in

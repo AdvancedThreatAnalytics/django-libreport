@@ -6,15 +6,19 @@ import reports.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reports', '0002_auto_20171117_1004'),
+        ("reports", "0002_auto_20171117_1004"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='report',
-            name='document',
-            field=models.FileField(max_length=1024, null=True, upload_to=reports.models.report_upload_to, blank=True),
+            model_name="report",
+            name="document",
+            field=models.FileField(
+                max_length=1024,
+                null=True,
+                upload_to=reports.models.report_upload_to,
+                blank=True,
+            ),
         ),
     ]
