@@ -11,7 +11,6 @@ phases:
       - export COMPOSE_FILE=docker-compose.codebuild.yml
       - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
       - pip install black
-      - pip install -r requirements.txt
       - pip install -r requirements-build.txt
       - REPOSITORY_BASE=818476207984.dkr.ecr.us-west-2.amazonaws.com
       - AWS_DEFAULT_REGION=us-west-2
