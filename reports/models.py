@@ -20,7 +20,7 @@ from .utils import hashed_upload_to
 from .exceptions import ReportSkipped
 
 logger = logging.getLogger(__name__)
-report_generated = Signal(providing_args=["report"])
+report_generated = Signal()
 REPORTS = {}
 
 # Dynamically load reports
