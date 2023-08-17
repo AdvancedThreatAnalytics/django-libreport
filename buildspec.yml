@@ -21,7 +21,7 @@ phases:
   build:
     commands:
       - black --check .
-      - docker-compose run app python reports/runtests/runtests.py
+      - docker-compose run app tox
       - python -m build
   post_build:
     commands:
