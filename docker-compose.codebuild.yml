@@ -10,7 +10,6 @@ services:
         - AWS_DEFAULT_REGION=us-west-2
     networks:
         - codebuild
-        -
   postgres:
     image: 818476207984.dkr.ecr.us-west-2.amazonaws.com/advancedthreatanalytics/docker-postgres-dev:15
     ports:
