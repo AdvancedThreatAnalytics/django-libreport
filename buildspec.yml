@@ -10,11 +10,12 @@ phases:
     commands:
         - aws codeartifact login --tool pip --domain criticalstart --domain-owner 818476207984 --repository criticalstart_global
         - pip install black
+        - pip install -r requirements.txt
         - pip install -r requirements-build.txt
   build:
     commands:
       - black --check .
-      - tox
+      - python reports/runtests/runtests.py
       - python -m build
   post_build:
     commands:
