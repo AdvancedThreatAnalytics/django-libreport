@@ -26,6 +26,6 @@ phases:
           echo Cannot upload to CodeArtifact
         fi
 
-  cache:
-    paths:
-      - "/root/.cache/pip/**/*/"
+cache:
+  paths:
+    - "/root/.cache/pip/**/*/"
