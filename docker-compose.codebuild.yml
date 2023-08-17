@@ -17,7 +17,7 @@ services:
     environment:
         POSTGRES_USER: docker
         POSTGRES_PASSWORD: docker
-    hostname: localhost
+    hostname: docker
     networks:
       - codebuild
 
