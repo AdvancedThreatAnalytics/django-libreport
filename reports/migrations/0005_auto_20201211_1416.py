@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reports', '0004_auto_20180502_1350'),
+        ("reports", "0004_auto_20180502_1350"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='report',
-            name='deleted',
+            model_name="report",
+            name="deleted",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='reportschedule',
-            name='deleted',
+            model_name="reportschedule",
+            name="deleted",
             field=models.BooleanField(default=False),
         ),
     ]

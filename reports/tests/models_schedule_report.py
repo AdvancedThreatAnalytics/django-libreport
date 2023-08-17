@@ -9,12 +9,10 @@ from reports.runtests.example.models import Organization
 
 
 class ScheduleReportModelTestCase(TestCase):
-
-    @patch('django.utils.timezone.now')
+    @patch("django.utils.timezone.now")
     def test_datetimes_by_period(self, mNow):
-
         mNow.return_value = datetime(2012, 12, 12, 12, 12, 12)
-        org = Organization(name='Org')
+        org = Organization(name="Org")
 
         # Daily
         daily = ReportSchedule(organization=org)
@@ -51,10 +49,9 @@ class ScheduleReportModelTestCase(TestCase):
         self.assertEquals(start, datetime(2011, 1, 1, 0, 0, 0))
         self.assertEquals(end, datetime(2011, 12, 31, 23, 59, 59))
 
-    @patch('django.utils.timezone.now')
+    @patch("django.utils.timezone.now")
     def test_datetimes_by_period_choosen_date(self, mNow):
-
-        org = Organization(name='Org')
+        org = Organization(name="Org")
         mNow.return_value = datetime(2012, 12, 12, 12, 12, 12)
 
         # Daily
@@ -90,141 +87,168 @@ class ScheduleReportModelTestCase(TestCase):
         self.assertEquals(end, datetime(2012, 12, 12, 10, 10, 10))
 
     def test_set_schedule(self):
-
-        org = Organization.objects.create(name='Org')
+        org = Organization.objects.create(name="Org")
 
         # Daily
         daily = ReportSchedule(organization=org)
         daily.period = ReportSchedule.PERIOD_DAILY
         daily.set_schedule()
-        self.assertEquals(daily.schedule, {
-            'day_of_month': '*',
-            'day_of_week': '*',
-            'hour': '6',
-            'minute': '0',
-            'month_of_year': '*'
-        })
+        self.assertEquals(
+            daily.schedule,
+            {
+                "day_of_month": "*",
+                "day_of_week": "*",
+                "hour": "6",
+                "minute": "0",
+                "month_of_year": "*",
+            },
+        )
 
         # Weekly
         weekly = ReportSchedule(organization=org)
         weekly.period = ReportSchedule.PERIOD_WEEKLY
         weekly.set_schedule()
-        self.assertEquals(weekly.schedule, {
-            'day_of_month': '*',
-            'day_of_week': '1',
-            'hour': '6',
-            'minute': '0',
-            'month_of_year': '*'
-        })
+        self.assertEquals(
+            weekly.schedule,
+            {
+                "day_of_month": "*",
+                "day_of_week": "1",
+                "hour": "6",
+                "minute": "0",
+                "month_of_year": "*",
+            },
+        )
 
         # Monthly
         monthly = ReportSchedule(organization=org)
         monthly.period = ReportSchedule.PERIOD_MONTHLY
         monthly.set_schedule()
-        self.assertEquals(monthly.schedule, {
-            'day_of_month': '1',
-            'day_of_week': '*',
-            'hour': '6',
-            'minute': '0',
-            'month_of_year': '*'
-        })
+        self.assertEquals(
+            monthly.schedule,
+            {
+                "day_of_month": "1",
+                "day_of_week": "*",
+                "hour": "6",
+                "minute": "0",
+                "month_of_year": "*",
+            },
+        )
 
         # Yearly
         yearly = ReportSchedule(organization=org)
         yearly.period = ReportSchedule.PERIOD_YEARLY
         yearly.set_schedule()
-        self.assertEquals(yearly.schedule, {
-            'day_of_month': '1',
-            'day_of_week': '*',
-            'hour': '6',
-            'minute': '0',
-            'month_of_year': '1'
-        })
+        self.assertEquals(
+            yearly.schedule,
+            {
+                "day_of_month": "1",
+                "day_of_week": "*",
+                "hour": "6",
+                "minute": "0",
+                "month_of_year": "1",
+            },
+        )
 
         # Quarterly
         quarterly = ReportSchedule(organization=org)
         quarterly.period = ReportSchedule.PERIOD_QUARTERLY
         quarterly.set_schedule()
-        self.assertEquals(quarterly.schedule, {
-            'minute': '0',
-            'hour': '6',
-            'day_of_week': '*',
-            'day_of_month': '1',
-            'month_of_year': '*/3'
-        })
+        self.assertEquals(
+            quarterly.schedule,
+            {
+                "minute": "0",
+                "hour": "6",
+                "day_of_week": "*",
+                "day_of_month": "1",
+                "month_of_year": "*/3",
+            },
+        )
 
     def test_set_schedule_choosen_date(self):
-
-        org = Organization.objects.create(name='Org')
+        org = Organization.objects.create(name="Org")
 
         # Daily
         daily = ReportSchedule(organization=org)
         daily.period = ReportSchedule.PERIOD_DAILY
         daily.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
         daily.set_schedule()
-        self.assertEquals(daily.schedule, {
-            'day_of_month': '*',
-            'day_of_week': '*',
-            'hour': '10',
-            'minute': '10',
-            'month_of_year': '*'
-        })
+        self.assertEquals(
+            daily.schedule,
+            {
+                "day_of_month": "*",
+                "day_of_week": "*",
+                "hour": "10",
+                "minute": "10",
+                "month_of_year": "*",
+            },
+        )
 
         # Weekly
         weekly = ReportSchedule(organization=org)
         weekly.period = ReportSchedule.PERIOD_WEEKLY
         weekly.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
         weekly.set_schedule()
-        self.assertEquals(weekly.schedule, {
-            'day_of_month': '*',
-            'day_of_week': '6',
-            'hour': '10',
-            'minute': '10',
-            'month_of_year': '*'
-        })
+        self.assertEquals(
+            weekly.schedule,
+            {
+                "day_of_month": "*",
+                "day_of_week": "6",
+                "hour": "10",
+                "minute": "10",
+                "month_of_year": "*",
+            },
+        )
 
         # Monthly
         monthly = ReportSchedule(organization=org)
         monthly.period = ReportSchedule.PERIOD_MONTHLY
         monthly.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
         monthly.set_schedule()
-        self.assertEquals(monthly.schedule, {
-            'day_of_month': '10',
-            'day_of_week': '*',
-            'hour': '10',
-            'minute': '10',
-            'month_of_year': '*'
-        })
+        self.assertEquals(
+            monthly.schedule,
+            {
+                "day_of_month": "10",
+                "day_of_week": "*",
+                "hour": "10",
+                "minute": "10",
+                "month_of_year": "*",
+            },
+        )
 
         # Quarterly
         quarterly = ReportSchedule(organization=org)
         quarterly.period = ReportSchedule.PERIOD_QUARTERLY
         quarterly.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
         quarterly.set_schedule()
-        self.assertEquals(quarterly.schedule, {
-            'day_of_month': '10',
-            'day_of_week': '*',
-            'hour': '10',
-            'minute': '10',
-            'month_of_year': '*/3'
-        })
+        self.assertEquals(
+            quarterly.schedule,
+            {
+                "day_of_month": "10",
+                "day_of_week": "*",
+                "hour": "10",
+                "minute": "10",
+                "month_of_year": "*/3",
+            },
+        )
 
         # Yearly
         yearly = ReportSchedule(organization=org)
         yearly.period = ReportSchedule.PERIOD_YEARLY
         yearly.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
         yearly.set_schedule()
-        self.assertEquals(yearly.schedule, {
-            'day_of_month': '10',
-            'day_of_week': '*',
-            'hour': '10',
-            'minute': '10',
-            'month_of_year': '10'
-        })
+        self.assertEquals(
+            yearly.schedule,
+            {
+                "day_of_month": "10",
+                "day_of_week": "*",
+                "hour": "10",
+                "minute": "10",
+                "month_of_year": "10",
+            },
+        )
 
     def test_quarterly_task_no_datetime_returns_valid_schedule(self):
-
-        org = Organization.objects.create(name='Org')
+        org = Organization.objects.create(name="Org")
 
         # Quarterly
         quarterly = ReportSchedule(organization=org)
@@ -235,16 +259,19 @@ class ScheduleReportModelTestCase(TestCase):
         quarterly.set_schedule()
 
         # Should run at 6:00AM, first day of the month, every 3 months
-        self.assertEquals(quarterly.schedule, {
-            'day_of_month': '1',
-            'day_of_week': '*',
-            'hour': '6',
-            'minute': '0',
-            'month_of_year': '*/3'
-        })
+        self.assertEquals(
+            quarterly.schedule,
+            {
+                "day_of_month": "1",
+                "day_of_week": "*",
+                "hour": "6",
+                "minute": "0",
+                "month_of_year": "*/3",
+            },
+        )
 
     def test_periodic_task_kwargs(self):
-        org = Organization.objects.create(name='Org')
+        org = Organization.objects.create(name="Org")
 
         schedule = ReportSchedule(organization=org)
         schedule.period = ReportSchedule.PERIOD_DAILY

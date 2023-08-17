@@ -13,5 +13,5 @@ def hashed_upload_to(prefix, fileattr, filename):
 
     base, ext = os.path.splitext(filename)
     options = ascii_uppercase + ascii_lowercase + digits
-    rand = ''.join(choice(options) for _ in range(10))
-    return '%s/%s/%s%s' % (prefix, rand, slugify(base), ext)
+    rand = "".join(choice(options) for _ in range(10))
+    return "%s/%s/%s%s" % (prefix, rand, slugify(base), ext)
