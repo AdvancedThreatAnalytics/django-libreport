@@ -169,16 +169,6 @@ class Report(BaseReportModel):
             )
             self.save()
 
-        except Exception as ex:
-            # Any other exception should try to mark the report as failed
-            # but pass through the exception so it is not mangled
-            self.status = self.STATUS_FAILED
-
-            # Only update the status in case things went horribly wrong
-            self.save(update_fields=["status"])
-
-            raise ex
-
     def _run_instance_method(self, method):
         kwargs = deepcopy(self.config)
         kwargs.update(

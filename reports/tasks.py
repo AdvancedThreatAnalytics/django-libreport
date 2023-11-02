@@ -2,6 +2,7 @@ import logging
 import sys
 
 from celery import shared_task
+from celery.exceptions import MaxRetriesExceededError
 from .models import Report, ReportSchedule
 
 
@@ -17,13 +18,17 @@ def generate_document(self, report_id):
     try:
         report = Report.objects.get(pk=report_id)
     except Report.DoesNotExist as exc:
-        raise self.retry(exc=exc, max_retries=3)
+        self.retry(exc=exc, max_retries=3)
     try:
         report.generate_document()
     except Exception as exc:
-        msg = "Error generating report"
-        logger.error(msg, exc_info=sys.exc_info())
-        raise self.retry(exc=exc)
+        logger.exception("Error generating report")
+        try:
+            self.retry()
+        except MaxRetriesExceededError:
+            report.status = Report.STATUS_FAILED
+            self.save(update_fields=["status"])
+            raise exc
 
 
 @shared_task(ignore_result=True)
