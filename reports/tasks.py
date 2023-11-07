@@ -26,7 +26,7 @@ def generate_document(self, report_id):
             self.retry()
         except MaxRetriesExceededError:
             report.status = Report.STATUS_FAILED
-            self.save(update_fields=["status"])
+            report.save(update_fields=["status"])
             raise exc
 
 
