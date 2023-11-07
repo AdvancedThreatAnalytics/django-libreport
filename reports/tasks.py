@@ -1,10 +1,9 @@
 import logging
-import sys
 
 from celery import shared_task
 from celery.exceptions import MaxRetriesExceededError
-from .models import Report, ReportSchedule
 
+from .models import Report, ReportSchedule
 
 logger = logging.getLogger(__name__)
 
