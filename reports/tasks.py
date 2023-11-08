@@ -21,10 +21,11 @@ def generate_document(self, report_id):
     try:
         report.generate_document()
     except Exception as exc:
-        logger.exception("Error generating report")
+        logger.exception(f"Error generating report {report.report}, will retry")
         try:
             self.retry()
         except MaxRetriesExceededError:
+            logger.exception(f"Error generating report {report.report}, no more retries")
             report.status = Report.STATUS_FAILED
             report.save(update_fields=["status"])
             raise exc
