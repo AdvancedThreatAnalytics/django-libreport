@@ -10,7 +10,7 @@ phases:
     commands:
       - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain criticalstart --domain-owner 818476207984 --query authorizationToken --duration-seconds 1800 --output text)
       - export PIP_INDEX_URL="https://aws:${CODEARTIFACT_AUTH_TOKEN}@criticalstart-818476207984.d.codeartifact.us-west-2.amazonaws.com/pypi/criticalstart_global/simple/"
-      - pip install black
+      - pip install black==23.1.0
       - pip install -r requirements-build.txt
       - REPOSITORY_BASE=818476207984.dkr.ecr.us-west-2.amazonaws.com
       - AWS_DEFAULT_REGION=us-west-2

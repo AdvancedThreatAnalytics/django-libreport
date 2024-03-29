@@ -86,4 +86,3 @@ CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 ORGANIZATION_MODEL = "example.Organization"
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-
