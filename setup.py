@@ -58,7 +58,6 @@ setup(
     name="django-libreports",
     version=version,
     url="http://github.com/AdvancedThreatAnalytics/django-libreport",
-    license="BSD",
     description="Django app to allow creating custom reports easily.",
     author="Advanced Threat Analytics Inc.",
     author_email="simon@advancedthreatanalytics.com",  # SEE NOTE BELOW (*)

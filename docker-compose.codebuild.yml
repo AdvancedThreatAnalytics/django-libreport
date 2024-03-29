@@ -6,8 +6,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - PIP_INDEX_URL
     environment:
         - AWS_DEFAULT_REGION=us-west-2
+        - PIP_INDEX_URL=${PIP_INDEX_URL}
     networks:
         - codebuild
   postgres:
