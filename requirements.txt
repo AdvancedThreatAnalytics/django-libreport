@@ -3,4 +3,3 @@ django>=3.2
 django-celery-beat
 pychrome
 pypandoc
-psycopg2
