@@ -3,3 +3,4 @@ django>=3.2
 django-celery-beat
 pychrome
 pypandoc
+sqlparse>=0.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
