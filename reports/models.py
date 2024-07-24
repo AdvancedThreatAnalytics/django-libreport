@@ -355,8 +355,8 @@ class ReportSchedule(BaseReportModel):
             minute = str(self.report_datetime.minute)
             hour = str(self.report_datetime.hour)
             # Celery cron is Sunday=0, Saturday=6
-            # isoweekday() is Sunday=1, Saturday=7
-            day_of_week = str(self.report_datetime.isoweekday() - 1)
+            # isoweekday() is Monday=1, Sunday=7
+            day_of_week = str(self.report_datetime.isoweekday() % 7)
             day_of_month = str(self.report_datetime.day)
             month_of_year = str(self.report_datetime.month)
         else:

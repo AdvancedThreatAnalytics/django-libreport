@@ -186,13 +186,14 @@ class ScheduleReportModelTestCase(TestCase):
         # Weekly
         weekly = ReportSchedule(organization=org)
         weekly.period = ReportSchedule.PERIOD_WEEKLY
+        # This is a Sunday
         weekly.report_datetime = datetime(2010, 10, 10, 10, 10, 10)
         weekly.set_schedule()
         self.assertEquals(
             weekly.schedule,
             {
                 "day_of_month": "*",
-                "day_of_week": "6",
+                "day_of_week": "0",
                 "hour": "10",
                 "minute": "10",
                 "month_of_year": "*",
