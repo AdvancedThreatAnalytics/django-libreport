@@ -68,6 +68,7 @@ class BaseReportModel(models.Model):
     config = models.JSONField(blank=True, default=dict)
     emails = ArrayField(models.EmailField(max_length=255), blank=True, null=True)
     deleted = models.BooleanField(default=False)
+    report_timezone = models.CharField(max_length=64, required=False, blank=True, null=True)
 
     class Meta:
         abstract = True
