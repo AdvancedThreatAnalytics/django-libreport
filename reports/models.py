@@ -181,6 +181,7 @@ class Report(BaseReportModel):
                 "created_at": self.created_at,
                 "organization": self.organization,
                 "config": self.config,
+                "report_timezone": self.report_timezone,
             }
         )
         instance = REPORTS[self.report]()
@@ -421,6 +422,7 @@ class ReportSchedule(BaseReportModel):
             "config": self.config,
             "emails": self.emails,
             "schedule": self,
+            "report_timezone": self.report_timezone,
         }
         if self.name:
             data["name"] = self.name
