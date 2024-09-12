@@ -68,6 +68,7 @@ class BaseReportModel(models.Model):
     config = models.JSONField(blank=True, default=dict)
     emails = ArrayField(models.EmailField(max_length=255), blank=True, null=True)
     deleted = models.BooleanField(default=False)
+    report_timezone = models.CharField(max_length=64, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -180,6 +181,7 @@ class Report(BaseReportModel):
                 "created_at": self.created_at,
                 "organization": self.organization,
                 "config": self.config,
+                "report_timezone": self.report_timezone,
             }
         )
         instance = REPORTS[self.report]()
@@ -420,6 +422,7 @@ class ReportSchedule(BaseReportModel):
             "config": self.config,
             "emails": self.emails,
             "schedule": self,
+            "report_timezone": self.report_timezone,
         }
         if self.name:
             data["name"] = self.name
