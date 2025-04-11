@@ -1,5 +1,4 @@
 import base64
-import pychrome
 import sys
 import tempfile
 from django.conf import settings
@@ -60,30 +59,3 @@ class BaseReport(object):
             )
             with open(temp.name, "rb") as document:
                 return ContentFile(document.read())
-
-    def html_to_pdf(self, html, delay=5):
-        """
-        :param html: html document as a bytestring
-        :param delay: time to wait for javascript loading in seconds
-        :return: path to a temporary file
-        """
-        split = urlparse(settings.CHROME_URL)
-        ipaddr = gethostbyname(split.hostname)
-        # related to https://github.com/GoogleChrome/puppeteer/issues/2242
-        url = settings.CHROME_URL.replace(split.hostname, ipaddr)
-
-        browser = pychrome.Browser(url=url)
-        encoded_html = base64.b64encode(html)
-
-        data_url = "data:text/html;base64,{}".format(encoded_html.decode("utf-8"))
-        tab = browser.new_tab(data_url)
-        tab.start()
-
-        tab.wait(delay)
-        try:
-            data = tab.Page.printToPDF()
-            data = base64.b64decode(data["data"])
-            return ContentFile(data)
-        finally:
-            tab.stop()
-            browser.close_tab(tab)
