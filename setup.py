@@ -69,7 +69,6 @@ setup(
         "python-dateutil",
         "django-celery-beat",
         "pypandoc",
-        "pychrome",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",

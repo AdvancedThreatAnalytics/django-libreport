@@ -13,7 +13,6 @@ Django app to allow creating custom reports easily..
 * Python (3.8)
 * Django (3.2+)
 * python-dateutil
-* pychrome
 * django-celery-beat
 * pypandoc
 * Chrome or Chromium web browser
