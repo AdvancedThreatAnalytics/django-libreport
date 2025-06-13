@@ -16,6 +16,7 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
 from .base import BaseReport
 from .conf import ORG_MODEL, REPORT_PACKAGES, TYPE_CHOICES
+from .fields import ChoicesCharField
 from .utils import hashed_upload_to
 from .exceptions import ReportSkipped
 
@@ -57,8 +58,8 @@ class BaseReportModel(models.Model):
     REPORT_CHOICES = [(r.id, r.name) for r in REPORTS.values()]
 
     name = models.CharField(max_length=64, blank=True)
-    report = models.CharField(max_length=64, choices=REPORT_CHOICES)
-    typ = models.CharField(max_length=32, choices=TYPE_CHOICES)
+    report = ChoicesCharField(max_length=64, choices=REPORT_CHOICES)
+    typ = ChoicesCharField(max_length=32, choices=TYPE_CHOICES)
     organization = models.ForeignKey(ORG_MODEL, on_delete=models.CASCADE)
 
     created_by = models.ForeignKey(
@@ -87,6 +88,10 @@ class Report(BaseReportModel):
         (STATUS_SKIPPED, "Skipped"),
     )
 
+    class Visibility(models.TextChoices):
+        CUSTOMER = "customer", "Customer facing"
+        INTERNAL = "internal", "Internal"
+
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
     document = models.FileField(
@@ -95,6 +100,7 @@ class Report(BaseReportModel):
     status = models.CharField(
         max_length=256, choices=STATUS_CHOICES, default=STATUS_RUNNING
     )
+    visibility = models.CharField(null=True, choices=Visibility.choices)
     schedule = models.ForeignKey(
         "reports.ReportSchedule",
         related_name="reports",
