@@ -74,7 +74,7 @@ class BaseReportModel(models.Model):
     emails = ArrayField(models.EmailField(max_length=255), blank=True, null=True)
     deleted = models.BooleanField(default=False)
     report_timezone = models.CharField(max_length=64, blank=True, null=True)
-    visibility = models.CharField(null=True, choices=Visibility.choices)
+    visibility = models.CharField(max_length=10, null=True, choices=Visibility.choices)
 
     class Meta:
         abstract = True
