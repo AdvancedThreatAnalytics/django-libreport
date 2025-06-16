@@ -57,6 +57,10 @@ class BaseReportModel(models.Model):
 
     REPORT_CHOICES = [(r.id, r.name) for r in REPORTS.values()]
 
+    class Visibility(models.TextChoices):
+        CUSTOMER = "customer", "Customer facing"
+        INTERNAL = "internal", "Internal"
+
     name = models.CharField(max_length=64, blank=True)
     report = ChoicesCharField(max_length=64, choices=REPORT_CHOICES)
     typ = ChoicesCharField(max_length=32, choices=TYPE_CHOICES)
@@ -70,6 +74,7 @@ class BaseReportModel(models.Model):
     emails = ArrayField(models.EmailField(max_length=255), blank=True, null=True)
     deleted = models.BooleanField(default=False)
     report_timezone = models.CharField(max_length=64, blank=True, null=True)
+    visibility = models.CharField(null=True, choices=Visibility.choices)
 
     class Meta:
         abstract = True
@@ -88,10 +93,6 @@ class Report(BaseReportModel):
         (STATUS_SKIPPED, "Skipped"),
     )
 
-    class Visibility(models.TextChoices):
-        CUSTOMER = "customer", "Customer facing"
-        INTERNAL = "internal", "Internal"
-
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
     document = models.FileField(
@@ -100,7 +101,6 @@ class Report(BaseReportModel):
     status = models.CharField(
         max_length=256, choices=STATUS_CHOICES, default=STATUS_RUNNING
     )
-    visibility = models.CharField(null=True, choices=Visibility.choices)
     schedule = models.ForeignKey(
         "reports.ReportSchedule",
         related_name="reports",
