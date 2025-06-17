@@ -429,6 +429,7 @@ class ReportSchedule(BaseReportModel):
             "emails": self.emails,
             "schedule": self,
             "report_timezone": self.report_timezone,
+            "visibility": self.visibility,
         }
         if self.name:
             data["name"] = self.name
