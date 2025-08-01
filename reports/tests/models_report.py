@@ -1,6 +1,6 @@
 from datetime import datetime
-from django.test import TestCase
 
+from django.test import TestCase
 from reports.models import Report
 from reports.runtests.example.models import Organization
 from reports.tasks import generate_document
@@ -28,6 +28,7 @@ class ReportModelTestCase(TestCase):
 
     def test_generate_document_idempotency(self):
         from unittest.mock import patch
+
         start = datetime(2017, 1, 1, 12, 33)
         end = datetime(2017, 1, 2, 12, 33)
         org = Organization.objects.create(name="Org2")
@@ -39,7 +40,9 @@ class ReportModelTestCase(TestCase):
             typ="pdf",
         )
 
-        with patch.object(Report, 'generate_document', wraps=report.generate_document) as mock_generate:
+        with patch.object(
+            Report, "generate_document", wraps=report.generate_document
+        ) as mock_generate:
             generate_document.apply(args=(report.pk,))
             report.refresh_from_db()
             self.assertEqual(report.status, Report.STATUS_COMPLETED)

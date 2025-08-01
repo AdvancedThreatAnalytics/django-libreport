@@ -20,8 +20,14 @@ def generate_document(self, report_id):
         self.retry(exc=exc, max_retries=3)
     try:
         # Idempotency check - don't overwrite existing reports
-        if report.status in [Report.STATUS_COMPLETED, Report.STATUS_FAILED, Report.STATUS_SKIPPED]:
-            logger.info(f"Report {report_id} already processed with status {report.status}, skipping generation.")
+        if report.status in [
+            Report.STATUS_COMPLETED,
+            Report.STATUS_FAILED,
+            Report.STATUS_SKIPPED,
+        ]:
+            logger.info(
+                f"Report {report_id} already processed with status {report.status}, skipping generation."
+            )
             return
         report.generate_document()
     except Exception as exc:
