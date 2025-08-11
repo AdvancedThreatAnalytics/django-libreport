@@ -1,5 +1,5 @@
-FROM 818476207984.dkr.ecr.us-west-2.amazonaws.com/advancedthreatanalytics/python-slim:3.11-build
-MAINTAINER infrastructure@advancedthreatanalytics.com
+FROM 818476207984.dkr.ecr.us-west-2.amazonaws.com/advancedthreatanalytics/python-slim:3.13-build
+LABEL maintainer="Critical Start <infrastructure@advancedthreatanalytics.com>"
 
 ARG PIP_INDEX_URL
 
