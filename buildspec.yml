@@ -5,7 +5,7 @@ env:
 phases:
   install:
     runtime-versions:
-      python: 3.11
+      python: 3.13
   pre_build:
     commands:
       - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain criticalstart --domain-owner 818476207984 --query authorizationToken --duration-seconds 1800 --output text)
