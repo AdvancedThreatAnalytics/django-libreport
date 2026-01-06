@@ -34,7 +34,7 @@ else:
             "NAME": "docker",
             "USER": "docker",
             "PASSWORD": "docker",
-            "HOST": "docker",
+            "HOST": "localhost",
             "PORT": "",
         }
     }
