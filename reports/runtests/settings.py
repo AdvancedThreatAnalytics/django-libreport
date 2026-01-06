@@ -15,6 +15,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+POSTGRES_DB = os.environ.get("POSTGRES_DB", "localhost")
+
 if "TRAVIS" in os.environ:
     DATABASES = {
         "default": {
@@ -34,7 +36,7 @@ else:
             "NAME": "docker",
             "USER": "docker",
             "PASSWORD": "docker",
-            "HOST": "localhost",
+            "HOST": POSTGRES_DB,
             "PORT": "",
         }
     }
