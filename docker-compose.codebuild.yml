@@ -12,6 +12,7 @@ services:
         - AWS_DEFAULT_REGION=us-west-2
         - PIP_INDEX_URL=${PIP_INDEX_URL}
         - POSTGRES_DB=docker
+        - POSTGRES_HOST=docker
     networks:
         - codebuild
   postgres:

@@ -15,7 +15,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-POSTGRES_DB = os.environ.get("POSTGRES_DB", "localhost")
+POSTGRES_DB = os.environ.get("POSTGRES_DB", "docker")
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
 
 if "TRAVIS" in os.environ:
     DATABASES = {
@@ -33,10 +34,10 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "docker",
+            "NAME": POSTGRES_DB,
             "USER": "docker",
             "PASSWORD": "docker",
-            "HOST": POSTGRES_DB,
+            "HOST": POSTGRES_HOST,
             "PORT": "",
         }
     }
