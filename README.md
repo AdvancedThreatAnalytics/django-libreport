@@ -53,22 +53,27 @@ That's it, we're done!
 # Development
 
 ### Setting up
-Setup dependencies
+
+Install tox (if not already installed):
 ```
-pip install -r requirements.txt
+uv tool install tox --with tox-uv
 ```
+
 ### Running tests
 
+Start the required services:
 ```
-python3 reports/runtests/runtests.py
+docker-compose up -d
 ```
 
-### Adding requirements to requirements-build.in
-Make sure when you run `pip-compile`, you add the `--no-emit-index-url` flag, to
-prevent the CodeArtifact token from being committed to source control:
+Run tests with tox:
 ```
-pip-compile --no-emit-index-url requirements-build.in
-pip install -r requirements-build.txt
+tox
+```
+
+Or run tests directly:
+```
+python3 reports/runtests/runtests.py
 ```
 
 ### Deploying
