@@ -1,8 +1,7 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone as dt_timezone
 from unittest.mock import patch
 
 from django.test import TestCase
-from django.utils import timezone
 
 from reports.base import BaseReport
 
@@ -46,7 +45,7 @@ class BaseReportDeprecationTestCase(TestCase):
 
     @patch("reports.base.timezone")
     def test_deprecated_report_days_remaining_during_grace_period(self, mock_tz):
-        mock_tz.now.return_value = timezone.datetime(2026, 2, 1, tzinfo=timezone.utc)
+        mock_tz.now.return_value = datetime(2026, 2, 1, tzinfo=dt_timezone.utc)
         report = DeprecatedReport()
         # EOL = 2026-04-01, today = 2026-02-01 → 59 days remaining
         self.assertEqual(report.deprecation_days_remaining, 59)
@@ -54,14 +53,14 @@ class BaseReportDeprecationTestCase(TestCase):
 
     @patch("reports.base.timezone")
     def test_deprecated_report_days_remaining_on_eol_date(self, mock_tz):
-        mock_tz.now.return_value = timezone.datetime(2026, 4, 1, tzinfo=timezone.utc)
+        mock_tz.now.return_value = datetime(2026, 4, 1, tzinfo=dt_timezone.utc)
         report = DeprecatedReport()
         self.assertEqual(report.deprecation_days_remaining, 0)
         self.assertFalse(report.is_retired)
 
     @patch("reports.base.timezone")
     def test_deprecated_report_is_retired_after_eol(self, mock_tz):
-        mock_tz.now.return_value = timezone.datetime(2026, 5, 1, tzinfo=timezone.utc)
+        mock_tz.now.return_value = datetime(2026, 5, 1, tzinfo=dt_timezone.utc)
         report = DeprecatedReport()
         self.assertTrue(report.deprecation_days_remaining < 0)
         self.assertTrue(report.is_retired)
