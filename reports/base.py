@@ -37,7 +37,9 @@ class BaseReport(object):
         """The date the report becomes fully retired, or ``None``."""
         if self.deprecation_date is None:
             return None
-        return self.deprecation_date + timedelta(days=self._DEPRECATION_GRACE_PERIOD_DAYS)
+        return self.deprecation_date + timedelta(
+            days=self._DEPRECATION_GRACE_PERIOD_DAYS
+        )
 
     @property
     def deprecation_days_remaining(self):
