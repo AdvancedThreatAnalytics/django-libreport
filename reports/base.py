@@ -1,8 +1,11 @@
 import base64
 import sys
 import tempfile
+from datetime import timedelta
+
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.utils import timezone
 from pypandoc import convert_text
 from socket import gethostbyname
 
@@ -24,6 +27,39 @@ elif is_py3:
 class BaseReport(object):
     id = ""
     name = ""
+    deprecation_date = None
+
+    # Number of days after deprecation_date before the report is fully retired.
+    _DEPRECATION_GRACE_PERIOD_DAYS = 90
+
+    @property
+    def eol_date(self):
+        """The date the report becomes fully retired, or ``None``."""
+        if self.deprecation_date is None:
+            return None
+        return self.deprecation_date + timedelta(days=self._DEPRECATION_GRACE_PERIOD_DAYS)
+
+    @property
+    def deprecation_days_remaining(self):
+        """Days until EOL.
+
+        Returns a positive int during the grace period, ``0`` on the EOL date,
+        a negative int after EOL, or ``None`` if the report is not deprecated.
+        """
+        if self.eol_date is None:
+            return None
+        return (self.eol_date - timezone.now().date()).days
+
+    @property
+    def is_deprecated(self):
+        """``True`` if the report has a deprecation date set."""
+        return self.deprecation_date is not None
+
+    @property
+    def is_retired(self):
+        """``True`` if the report is past its EOL date."""
+        days = self.deprecation_days_remaining
+        return days is not None and days < 0
 
     def get_report_name(self, **kwargs):
         return " ".join([kwargs["organization"].name, self.id.capitalize(), "Report"])
