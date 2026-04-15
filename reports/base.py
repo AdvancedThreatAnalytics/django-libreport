@@ -1,6 +1,7 @@
 import base64
 import sys
 import tempfile
+from datetime import date
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -25,7 +26,11 @@ elif is_py3:
 class BaseReport(object):
     id = ""
     name = ""
-    retiring_date = None
+    retirement_date = None
+
+    @property
+    def is_retired(self):
+        return self.retirement_date is not None and self.retirement_date <= date.today()
 
     def get_report_name(self, **kwargs):
         return " ".join([kwargs["organization"].name, self.id.capitalize(), "Report"])
