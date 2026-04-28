@@ -6,8 +6,8 @@ from django.test import TestCase
 from django_celery_beat.models import PeriodicTask
 
 from reports.models import ReportSchedule
-from reports.runtests.example.models import Organization
 from reports.tasks import schedule_task
+from reports.runtests.example.models import Organization
 
 
 class ScheduleReportModelTestCase(TestCase):
@@ -310,7 +310,7 @@ class ScheduleReportModelTestCase(TestCase):
             retirement_date = date.today() - timedelta(days=1)
 
         mock_reports.get.return_value = RetiredReport
-        self.assertTrue(RetiredReport.is_retired())
+        self.assertTrue(RetiredReport().is_retired)
 
         org = Organization.objects.create(name="RetiredOrg")
         schedule = ReportSchedule.objects.create(
