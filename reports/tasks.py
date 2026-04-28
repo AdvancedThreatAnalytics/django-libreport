@@ -3,7 +3,7 @@ import logging
 from celery import shared_task
 from celery.exceptions import MaxRetriesExceededError
 
-from .models import Report, ReportSchedule
+from .models import REPORTS, Report, ReportSchedule
 
 logger = logging.getLogger(__name__)
 
@@ -46,4 +46,14 @@ def generate_document(self, report_id):
 @shared_task(ignore_result=True)
 def schedule_task(report_schedule_id):
     report_schedule = ReportSchedule.objects.get(pk=report_schedule_id)
+
+    # Skip execution only after the retirement date has passed (is_retired).
+    report_class = REPORTS.get(report_schedule.report)
+    if report_class is not None and report_class().is_retired:
+        logger.info(
+            f"Skipping scheduled report '{report_schedule.report}' "
+            f"(schedule {report_schedule_id}): report has been retired."
+        )
+        return
+
     report_schedule.schedule_report()
