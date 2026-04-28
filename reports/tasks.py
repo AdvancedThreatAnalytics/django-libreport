@@ -49,7 +49,7 @@ def schedule_task(report_schedule_id):
 
     # Skip execution only after the retirement date has passed (is_retired).
     report_class = REPORTS.get(report_schedule.report)
-    if report_class is not None and report_class().is_retired:
+    if report_class is not None and report_class.is_retired():
         logger.info(
             f"Skipping scheduled report '{report_schedule.report}' "
             f"(schedule {report_schedule_id}): report has been retired."

@@ -310,6 +310,7 @@ class ScheduleReportModelTestCase(TestCase):
             retirement_date = date.today() - timedelta(days=1)
 
         mock_reports.get.return_value = RetiredReport
+        self.assertTrue(RetiredReport.is_retired())
 
         org = Organization.objects.create(name="RetiredOrg")
         schedule = ReportSchedule.objects.create(

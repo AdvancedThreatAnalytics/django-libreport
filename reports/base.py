@@ -28,9 +28,9 @@ class BaseReport(object):
     name = ""
     retirement_date = None
 
-    @property
-    def is_retired(self):
-        return self.retirement_date is not None and self.retirement_date <= date.today()
+    @classmethod
+    def is_retired(cls):
+        return cls.retirement_date is not None and cls.retirement_date <= date.today()
 
     def get_report_name(self, **kwargs):
         return " ".join([kwargs["organization"].name, self.id.capitalize(), "Report"])
