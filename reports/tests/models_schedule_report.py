@@ -1,11 +1,12 @@
 import json
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from unittest.mock import patch
 
 from django.test import TestCase
 from django_celery_beat.models import PeriodicTask
 
 from reports.models import ReportSchedule
+from reports.tasks import schedule_task
 from reports.runtests.example.models import Organization
 
 
@@ -283,3 +284,63 @@ class ScheduleReportModelTestCase(TestCase):
         task = schedule.periodic_task
         # Make sure django-celery-beat can properly load kwargs
         json.loads(task.kwargs)
+
+    @patch.object(ReportSchedule, "schedule_report")
+    def test_schedule_task_runs_for_active_report(self, mock_schedule_report):
+        """schedule_report must be called for a report with no retirement date."""
+        org = Organization.objects.create(name="ActiveOrg")
+        schedule = ReportSchedule.objects.create(
+            report="example", typ="pdf", organization=org
+        )
+        schedule.set_schedule()
+        schedule_task(schedule.pk)
+        mock_schedule_report.assert_called_once()
+
+    @patch("reports.tasks.REPORTS")
+    @patch.object(ReportSchedule, "schedule_report")
+    def test_schedule_task_skipped_when_report_is_retired(
+        self, mock_schedule_report, mock_reports
+    ):
+        """schedule_report must not be called once the retirement date has passed."""
+        from reports.base import BaseReport
+
+        class RetiredReport(BaseReport):
+            id = "retired_test"
+            name = "Retired Test"
+            retirement_date = date.today() - timedelta(days=1)
+
+        mock_reports.get.return_value = RetiredReport
+        self.assertTrue(RetiredReport().is_retired)
+
+        org = Organization.objects.create(name="RetiredOrg")
+        schedule = ReportSchedule.objects.create(
+            report="example", typ="pdf", organization=org
+        )
+        schedule.set_schedule()
+        schedule_task(schedule.pk)
+
+        mock_schedule_report.assert_not_called()
+
+    @patch("reports.tasks.REPORTS")
+    @patch.object(ReportSchedule, "schedule_report")
+    def test_schedule_task_runs_during_grace_period(
+        self, mock_schedule_report, mock_reports
+    ):
+        """schedule_report must be called when retirement date is still in the future."""
+        from reports.base import BaseReport
+
+        class GracePeriodReport(BaseReport):
+            id = "grace_test"
+            name = "Grace Period Test"
+            retirement_date = date.today() + timedelta(days=30)
+
+        mock_reports.get.return_value = GracePeriodReport
+
+        org = Organization.objects.create(name="GraceOrg")
+        schedule = ReportSchedule.objects.create(
+            report="example", typ="pdf", organization=org
+        )
+        schedule.set_schedule()
+        schedule_task(schedule.pk)
+
+        mock_schedule_report.assert_called_once()

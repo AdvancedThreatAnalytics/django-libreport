@@ -2,7 +2,6 @@ import base64
 import sys
 import tempfile
 from datetime import date
-
 from django.conf import settings
 from django.core.files.base import ContentFile
 from pypandoc import convert_text
